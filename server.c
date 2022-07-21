@@ -230,7 +230,7 @@ static void runServer(Server srv){
 				}else{ /* a valid connection has been accepted */ 
 					Log(srv, ANSI_COLOR_GREEN "client: " ANSI_COLOR_RESET "%s\n", recvb);
 				
-					sprintf(sendb, "ok");
+					sprintf(sendb, "OK");
 					if((bytes = write(s, sendb, MAXLEN)) <= 0){
 						Log(srv, ANSI_COLOR_RED "read: error read buffer\n" ANSI_COLOR_RESET);
 						(void) shutdown(s, SHUT_RDWR);
