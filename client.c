@@ -159,6 +159,38 @@ static int initClient(char *host, char *port){
 	return -1;
 }
 
+/* auto assign an id to client */
+static void assignName(int sock){ 
+	char *sendb, recvb[MAXLEN];
+	int bytes, byter;
+
+	memset(recvb, 0, MAXLEN);
+
+	(void) printf(ANSI_COLOR_CYAN "\nWelcome to %s: period newline exits\n\n" ANSI_COLOR_RESET, prog);
+
+	/* read keyboard... */
+	while(((sendb = getLine("Insert a username to start\n> ")) != NULL) && (strcmp(sendb, ".") != 0)){
+		if((byter = write(sock, sendb, MAXLEN)) <= 0){
+			Log(ANSI_COLOR_RED "%s: write: write buffer error\n" ANSI_COLOR_RESET, prog);
+			break;
+		}
+
+		free(sendb);
+
+		if((bytes = read(sock, recvb, 255)) <= 0){
+			Log(ANSI_COLOR_RED "%s: read: read buffer error\n" ANSI_COLOR_RESET, prog);
+			break;
+		}
+
+		if(strcmp(recvb, "OK") != 0){
+			Log("Username assign error, retry\n");
+		}else{
+			(void) printf(ANSI_COLOR_GREEN "Welcome: %s\n" ANSI_COLOR_RESET, recvb); /* echo server response */ 
+			break;
+		}
+	}
+}
+
 /* runClient - read from keyboard, send to server, echo response */ 
 
 static void runClient(int sock){ 
@@ -236,6 +268,7 @@ int main(int argc, char **argv){
 	}
 
 	sock = initClient(host, port); /* call will exit on error or failure */ 
+	assignName(sock);
 	runClient(sock);
 	doneClient(sock);
 	exit(EX_OK);
