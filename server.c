@@ -223,6 +223,31 @@ static void runServer(Server srv){
 				}
 
 				Log(srv, ANSI_COLOR_GREEN "accept connection n. %d: host = %s port = %s\n" ANSI_COLOR_RESET, my_conn_sd, host, service);
+
+				while(1){
+					if((byter = read(s, recvb, MAXLEN)) <= 0){
+						Log(srv, ANSI_COLOR_RED "read: error read buffer\n" ANSI_COLOR_RESET);
+						break;
+					}else{ /* a valid connection has been accepted */ 
+						Log(srv, ANSI_COLOR_GREEN "client: " ANSI_COLOR_RESET "%s\n", recvb);
+
+						if(byter < 16){
+							sprintf(sendb, "ok", byter, recvb);
+							if((bytes = write(s, sendb, MAXLEN)) <= 0){
+								Log(srv, ANSI_COLOR_RED "read: error read buffer\n" ANSI_COLOR_RESET);
+								(void) shutdown(s, SHUT_RDWR);
+								break; 
+							}
+						}else{
+							sprintf(sendb, "noname", byter, recvb);
+							if((bytes = write(s, sendb, MAXLEN)) <= 0){
+								Log(srv, ANSI_COLOR_RED "read: error read buffer\n" ANSI_COLOR_RESET);
+								(void) shutdown(s, SHUT_RDWR);
+								continue; 
+							}
+						}
+					}
+				}
 			
 				while(recvb){
 					if((byter = read(s, recvb, MAXLEN)) <= 0){
