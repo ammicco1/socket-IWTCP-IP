@@ -182,10 +182,12 @@ static void assignName(int sock){
 			break;
 		}
 
+		(void) printf(ANSI_COLOR_GREEN "response:" ANSI_COLOR_RESET " %s\n", recvb); /* echo server response */ 
+
 		if(strcmp(recvb, "OK") != 0){
 			Log("Username assign error, retry\n");
 		}else{
-			(void) printf(ANSI_COLOR_GREEN "Welcome: %s\n" ANSI_COLOR_RESET, recvb); /* echo server response */ 
+			(void) printf(ANSI_COLOR_GREEN "Welcome to the chat!\n" ANSI_COLOR_RESET, recvb); /* echo server response */ 
 			break;
 		}
 	}
